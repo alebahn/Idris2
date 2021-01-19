@@ -77,9 +77,9 @@ oneSoleFactorOfOne : (a : Nat) -> Factor a 1 -> a = 1
 oneSoleFactorOfOne Z (CofactorExists q prf) = absurd $ uninhabited prf
 oneSoleFactorOfOne (S Z) (CofactorExists _ _) = Refl
 oneSoleFactorOfOne (S (S k)) (CofactorExists Z prf) =
-        absurd . uninhabited $ replace {p = \x => 1 = x} (multZeroRightZero k) prf
+        absurd $ uninhabited $ replace {p = \x => 1 = x} (multZeroRightZero k) prf
 oneSoleFactorOfOne (S (S k)) (CofactorExists (S j) prf) =
-        absurd . uninhabited . succInjective 0 (S j + (j + (k * S j))) $
+        absurd $ uninhabited . succInjective 0 (S j + (j + (k * S j))) $
         replace {p = \x => 1 = S x} (sym $ plusSuccRightSucc j (j + (k * S j))) prf
 
 ||| Every natural number is factor of itself.
@@ -104,11 +104,11 @@ multOneSoleNeutral Z b prf =
         rewrite sym $ plusZeroRightNeutral b in
         sym prf
 multOneSoleNeutral (S k) Z prf =
-        absurd . uninhabited $
+        absurd $ uninhabited $
         replace {p = \x => S (S k) = x} (multZeroRightZero k) prf
 multOneSoleNeutral (S k) (S Z) prf = Refl
 multOneSoleNeutral (S k) (S (S j)) prf =
-        absurd . uninhabited .
+        absurd $ uninhabited .
         subtractEqLeft k {b = 0} {c = S j + S (j + (k * S j))} $
         rewrite plusSuccRightSucc j (S (j + (k * S j))) in
         rewrite plusZeroRightNeutral k in
@@ -290,7 +290,7 @@ factNotSuccFact : {n, p : Nat} -> GT p 1 -> Factor p n -> NotFactor p (S n)
 factNotSuccFact {n} {p = Z} pGt1 (CofactorExists q prf) =
         absurd $ succNotLTEzero pGt1
 factNotSuccFact {n} {p = S Z} pGt1 (CofactorExists q prf) =
-        absurd . succNotLTEzero $ fromLteSucc pGt1
+        absurd $ succNotLTEzero $ fromLteSucc pGt1
 factNotSuccFact {n} {p = S (S k)} pGt1 (CofactorExists q prf) =
         ProperRemExists q FZ (
             rewrite sym prf in
@@ -358,7 +358,7 @@ notLteAndGt (S k) (S j) aLteB aGtB = notLteAndGt k j (fromLteSucc aLteB) (fromLt
 gcd_step : (x : Search) ->
     (rec : (y : Search) -> Smaller y x ->  (f : Nat ** GCD f (left y) (right y))) ->
     (f : Nat ** GCD f (left x) (right x))
-gcd_step (SearchArgs Z _ bLteA {bNonZero}) _ = absurd . succNotLTEzero $ lteTransitive bNonZero bLteA
+gcd_step (SearchArgs Z _ bLteA {bNonZero}) _ = absurd $ succNotLTEzero $ lteTransitive bNonZero bLteA
 gcd_step (SearchArgs _ Z _ {bNonZero}) _ = absurd $ succNotLTEzero bNonZero
 gcd_step (SearchArgs (S a) (S b) bLteA {bNonZero}) rec = case divMod (S a) (S b) of
     Fraction (S a) (S b) q FZ prf =>
@@ -377,7 +377,7 @@ gcd_step (SearchArgs (S a) (S b) bLteA {bNonZero}) rec = case divMod (S a) (S b)
     Fraction (S a) (S b) q (FS r) prf =>
             let rLtSb = lteSuccRight $ elemSmallerThanBound r
                 qGt1 = the (LTE 1 q) $ case q of
-                    Z => absurd . notLteAndGt (S $ finToNat r) b (elemSmallerThanBound r) $
+                    Z => absurd $ notLteAndGt (S $ finToNat r) b (elemSmallerThanBound r) $
                         replace {p = LTE (S b)} (sym prf) bLteA
                     (S k) => LTESucc LTEZero
                 smaller = the (LTE (S (S (plus b (S (finToNat r))))) (S (plus a (S b)))) $
