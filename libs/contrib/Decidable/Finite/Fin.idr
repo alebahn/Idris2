@@ -12,7 +12,7 @@ public export
 finiteDecEx : {n : Nat} -> {0 p : Fin n -> Type} ->
   (pdec : (k : Fin n) -> Dec (p k)) ->
   Dec (k ** p k)
-finiteDecEx {n = Z} pdec = No (absurd . fst)
+finiteDecEx {n = Z} pdec = No (uninhabited . fst)
 finiteDecEx {n = S n} pdec =
   case pdec FZ of
     Yes pz => Yes (FZ ** pz)

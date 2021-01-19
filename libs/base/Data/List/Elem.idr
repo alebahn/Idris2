@@ -31,8 +31,8 @@ thereInjective Refl = Refl
 export
 DecEq (Elem x xs) where
   decEq Here Here = Yes Refl
-  decEq Here (There later) = No absurd
-  decEq (There later) Here = No absurd
+  decEq Here (There later) = No uninhabited
+  decEq (There later) Here = No uninhabited
   decEq (There this) (There that) with (decEq this that)
     decEq (There this) (There this) | Yes Refl  = Yes Refl
     decEq (There this) (There that) | No contra = No (contra . thereInjective)
@@ -51,7 +51,7 @@ neitherHereNorThere _   xnxs  (There xxs) = xnxs xxs
 ||| Check whether the given element is a member of the given list.
 public export
 isElem : DecEq a => (x : a) -> (xs : List a) -> Dec (Elem x xs)
-isElem x [] = No absurd
+isElem x [] = No uninhabited
 isElem x (y :: xs) with (decEq x y)
   isElem x (x :: xs) | Yes Refl = Yes Here
   isElem x (y :: xs) | No xny with (isElem x xs)

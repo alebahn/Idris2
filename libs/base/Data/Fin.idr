@@ -163,8 +163,8 @@ restrict n val = let val' = assert_total (abs (mod val (cast (S n)))) in
 export
 DecEq (Fin n) where
   decEq FZ FZ = Yes Refl
-  decEq FZ (FS f) = No absurd
-  decEq (FS f) FZ = No absurd
+  decEq FZ (FS f) = No uninhabited
+  decEq (FS f) FZ = No uninhabited
   decEq (FS f) (FS f')
       = case decEq f f' of
              Yes p => Yes $ cong FS p

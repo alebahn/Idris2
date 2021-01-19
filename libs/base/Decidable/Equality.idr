@@ -26,8 +26,8 @@ public export
 DecEq Bool where
   decEq True  True  = Yes Refl
   decEq False False = Yes Refl
-  decEq False True  = No absurd
-  decEq True  False = No absurd
+  decEq False True  = No uninhabited
+  decEq True  False = No uninhabited
 
 --------------------------------------------------------------------------------
 -- Nat
@@ -36,8 +36,8 @@ DecEq Bool where
 public export
 DecEq Nat where
   decEq Z     Z     = Yes Refl
-  decEq Z     (S _) = No absurd
-  decEq (S _) Z     = No absurd
+  decEq Z     (S _) = No uninhabited
+  decEq (S _) Z     = No uninhabited
   decEq (S n) (S m) with (decEq n m)
    decEq (S n) (S m) | Yes p = Yes $ cong S p
    decEq (S n) (S m) | No p = No $ \h : (S n = S m) => p $ succInjective n m h
@@ -49,8 +49,8 @@ DecEq Nat where
 public export
 DecEq t => DecEq (Maybe t) where
   decEq Nothing Nothing = Yes Refl
-  decEq Nothing (Just _) = No absurd
-  decEq (Just _) Nothing = No absurd
+  decEq Nothing (Just _) = No uninhabited
+  decEq (Just _) Nothing = No uninhabited
   decEq (Just x') (Just y') with (decEq x' y')
     decEq (Just x') (Just y') | Yes p = Yes $ cong Just p
     decEq (Just x') (Just y') | No p
@@ -65,8 +65,8 @@ public export
   decEq (Left x) (Left y) with (decEq x y)
    decEq (Left x) (Left x) | Yes Refl = Yes Refl
    decEq (Left x) (Left y) | No contra = No (contra . leftInjective)
-  decEq (Left x) (Right y) = No absurd
-  decEq (Right x) (Left y) = No absurd
+  decEq (Left x) (Right y) = No uninhabited
+  decEq (Right x) (Left y) = No uninhabited
   decEq (Right x) (Right y) with (decEq x y)
    decEq (Right x) (Right x) | Yes Refl = Yes Refl
    decEq (Right x) (Right y) | No contra = No (contra . rightInjective)
@@ -95,8 +95,8 @@ public export
 public export
 DecEq a => DecEq (List a) where
   decEq [] [] = Yes Refl
-  decEq (x :: xs) [] = No absurd
-  decEq [] (x :: xs) = No absurd
+  decEq (x :: xs) [] = No uninhabited
+  decEq [] (x :: xs) = No uninhabited
   decEq (x :: xs) (y :: ys) with (decEq x y)
     decEq (x :: xs) (y :: ys) | No contra =
       No $ contra . fst . consInjective
